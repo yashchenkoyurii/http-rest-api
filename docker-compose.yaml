@@ -1,0 +1,31 @@
+version: "3"
+services:
+  app:
+    image: apiserver:latest
+    build: .
+    depends_on:
+      - db
+    networks:
+      - app
+    ports:
+    - 8887:8887
+    volumes:
+    - ./configs:/go/bin/configs
+  db:
+    image: postgres:13.1
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: restapi
+    networks:
+      - app
+    volumes:
+    - database:/var/lib/postgresql/data
+    ports:
+    - 5432:5432
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  database:
+    driver: local
