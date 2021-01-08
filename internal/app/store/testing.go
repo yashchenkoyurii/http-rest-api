@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
@@ -23,4 +24,12 @@ func TestStore(t *testing.T, config *Config) (*Store, func(...string)) {
 
 		s.Close()
 	}
+}
+
+func Host() (host string) {
+	if host = os.Getenv("DB_HOST"); host == "" {
+		host = "localhost"
+	}
+
+	return
 }
