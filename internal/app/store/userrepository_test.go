@@ -8,7 +8,7 @@ import (
 
 func TestUserRepository_Create(t *testing.T) {
 	s, teardown := TestStore(t, &Config{
-		Host:     "localhost",
+		Host:     Host(),
 		DBName:   "restapi",
 		DBPort:   5432,
 		User:     "postgres",
@@ -28,7 +28,7 @@ func TestUserRepository_Create(t *testing.T) {
 
 func TestUserRepository_FinByEmail(t *testing.T) {
 	s, teardown := TestStore(t, &Config{
-		Host:     "localhost",
+		Host:     Host(),
 		DBName:   "restapi",
 		DBPort:   5432,
 		User:     "postgres",

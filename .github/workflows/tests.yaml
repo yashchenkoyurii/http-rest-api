@@ -1,0 +1,37 @@
+name: Tests
+
+on: [ pull_request ]
+
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres-db:
+        image: postgres:13.1
+        env:
+          POSTGRES_PASSWORD: mysecretpassword
+          POSTGRES_DB: restapi
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: |
+          docker build --target builder \
+          		-t ${REPO_NAME}:${GITHUB_SHA} \
+          		--no-cache .
+      - name: Run migrations
+        run: |
+          docker run -v $(pwd)/internal/migrations:/migrations --network=${{job.container.network}} migrate/migrate \
+            -path /migrations -database postgres://postgres:mysecretpassword@postgres-db:5432/restapi?sslmode=disable up
+      - name: Run tests
+        run: |
+          docker run --rm --name app \
+              -v $(pwd)/configs:/go/bin/configs \
+              -e DB_HOST=postgres-db \
+              --network=${{job.container.network}} \
+              ${REPO_NAME}:${GITHUB_SHA} \
+              bash -c "go test -v -race -timeout 30s ./..."
