@@ -17,10 +17,7 @@ func TestUserRepository_Create(t *testing.T) {
 	})
 	defer teardown("users")
 
-	u, err := s.User().Create(model.User{
-		Email:    "example@email.com",
-		Password: "test",
-	})
+	u, err := s.User().Create(model.TestUser(t))
 
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
@@ -37,14 +34,17 @@ func TestUserRepository_FinByEmail(t *testing.T) {
 	})
 	defer teardown("users")
 
-	_, err := s.User().FinByEmail(model.User{Email: "notfound@email.com"})
+	u := model.TestUser(t)
+	u.Email = "notfound@email.com"
+
+	_, err := s.User().FinByEmail(u)
 	assert.Error(t, err)
 
-	email := "email@email.com"
+	u.Email = "email@email.com"
 
-	s.User().Create(model.User{Email: email})
-	u, err := s.User().FinByEmail(model.User{Email: email})
+	s.User().Create(u)
+	foundedUser, err := s.User().FinByEmail(u)
 	assert.NoError(t, err)
-	assert.NotNil(t, u)
+	assert.NotNil(t, foundedUser)
 
 }
