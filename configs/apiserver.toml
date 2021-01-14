@@ -1,8 +1,8 @@
 bind_addr = ":8887"
 log_level = "error"
 
-[store]
-host = "db"
+[sql]
+host = "localhost"
 db_name = "restapi"
 db_port = 5432
 user = "postgres"
