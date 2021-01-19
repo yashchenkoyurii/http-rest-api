@@ -1,4 +1,6 @@
-package store
+package sqlstore
+
+import "fmt"
 
 type Config struct {
 	Host     string `toml:"host"`
@@ -18,4 +20,16 @@ func NewConfig() *Config {
 		Password: "mysecretpassword",
 		SSLMode:  "disable",
 	}
+}
+
+func (c *Config) DBUrl() string {
+	return fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		c.Host,
+		c.DBPort,
+		c.User,
+		c.Password,
+		c.DBName,
+		c.SSLMode,
+	)
 }
